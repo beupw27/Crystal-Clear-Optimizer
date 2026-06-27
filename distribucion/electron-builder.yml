@@ -1,0 +1,29 @@
+appId: com.crystalclear.optimizer
+productName: Crystal Clear Optimizer
+directories:
+  output: dist_electron
+  buildResources: assets
+files:
+  - dist/**/*
+  - node_modules/**/*
+  - package.json
+  - main.js
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+        - ia32
+  icon: assets/icon.ico
+mac:
+  target:
+    - dmg
+    - zip
+  category: public.app-category.utilities
+  icon: assets/icon.icns
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Crystal Clear Optimizer

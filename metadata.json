@@ -1,0 +1,6 @@
+{
+  "name": "Crystal Clear Optimizer",
+  "description": "An elegant, interactive system optimizer and cache cleaning simulator featuring an immersive animated refractive crystal core, real-time memory analytics, and professional configurations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

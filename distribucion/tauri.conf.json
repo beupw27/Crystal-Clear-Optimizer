@@ -1,0 +1,66 @@
+{
+  "build": {
+    "beforeBuildCommand": "npm run build",
+    "beforeDevCommand": "npm run dev",
+    "devPath": "http://localhost:3000",
+    "distDir": "../dist"
+  },
+  "package": {
+    "productName": "Crystal Clear Optimizer",
+    "version": "1.0.0"
+  },
+  "tauri": {
+    "allowlist": {
+      "all": false,
+      "shell": {
+        "all": false,
+        "open": true
+      }
+    },
+    "bundle": {
+      "active": true,
+      "category": "Utility",
+      "copyright": "Copyright © 2026 Crystal Clear. All rights reserved.",
+      "deb": {
+        "depends": []
+      },
+      "externalBin": [],
+      "icon": [
+        "icons/32x32.png",
+        "icons/128x128.png",
+        "icons/128x128@2x.png",
+        "icons/icon.icns",
+        "icons/icon.ico"
+      ],
+      "identifier": "com.crystalclear.optimizer",
+      "longDescription": "An elegant, interactive system optimizer featuring real-time memory analytics and advanced system cleanups.",
+      "macOS": {
+        "entitlements": null,
+        "exceptionDomain": "",
+        "frameworks": [],
+        "providerBundleIdentifier": null,
+        "signingIdentity": null
+      },
+      "resources": [],
+      "shortDescription": "Elegant System Optimizer & Security Suite",
+      "targets": "all",
+      "windows": {
+        "certificateThumbprint": null,
+        "digestAlgorithm": "sha256",
+        "timestampServer": ""
+      }
+    },
+    "security": {
+      "csp": null
+    },
+    "windows": [
+      {
+        "fullscreen": false,
+        "height": 720,
+        "resizable": true,
+        "title": "Crystal Clear Optimizer & Security Core",
+        "width": 1080
+      }
+    ]
+  }
+}
