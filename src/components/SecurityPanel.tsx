@@ -2,16 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Shield, Lock, EyeOff, Server, Wifi, Cpu, 
-  RefreshCw, Radio, CheckCircle, AlertTriangle, AlertCircle 
+  RefreshCw, Radio, CheckCircle, AlertTriangle, AlertCircle, Trash2
 } from 'lucide-react';
-import { SecurityShield } from '../types';
+import { SecurityShield, ScanState } from '../types';
 
 interface SecurityPanelProps {
   shields: SecurityShield[];
   onToggleShield: (id: string) => void;
+  scanState?: ScanState;
 }
 
-export default function SecurityPanel({ shields, onToggleShield }: SecurityPanelProps) {
+export default function SecurityPanel({ shields, onToggleShield, scanState }: SecurityPanelProps) {
   const [isVpnActive, setIsVpnActive] = useState(true);
   const [isScanningWifi, setIsScanningWifi] = useState(false);
   const [wifiStatus, setWifiStatus] = useState<'unchecked' | 'scanning' | 'secure' | 'vulnerable'>('unchecked');
@@ -43,6 +44,21 @@ export default function SecurityPanel({ shields, onToggleShield }: SecurityPanel
 
     return () => clearInterval(interval);
   }, [isVpnActive]);
+
+  const handleWipeIpData = () => {
+    setIpCipher('OCULTADA_Y_WIPED::0.0.0.0');
+    setCryptoInput('');
+    setCipherHex('');
+    setKeyHex('');
+    setIvHex('');
+    setDecryptedText('');
+  };
+
+  useEffect(() => {
+    if (scanState === 'cleaned') {
+      handleWipeIpData();
+    }
+  }, [scanState]);
 
   // Real Web Cryptography AES-256-GCM implementation
   const handleRealEncrypt = async () => {
@@ -179,26 +195,56 @@ export default function SecurityPanel({ shields, onToggleShield }: SecurityPanel
 
         {/* Dynamic IP data readouts */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4 pt-4 border-t border-white/5 font-mono text-[11px]" id="ip-encryption-metrics">
-          <div className="bg-neutral-950/40 p-3 rounded-xl border border-white/5">
-            <div className="text-neutral-500 uppercase text-[9px] tracking-widest font-semibold mb-1">Dirección IP Original</div>
-            <div className="flex items-center justify-between text-neutral-300 font-medium">
-              <span>{ipCipher}</span>
-              <span className="text-[10px] text-rose-400 font-bold">EXpuesta</span>
+          <div className="bg-neutral-950/40 p-3 rounded-xl border border-white/5 flex flex-col justify-between gap-2">
+            <div>
+              <div className="text-neutral-500 uppercase text-[9px] tracking-widest font-semibold mb-1">Dirección IP Original</div>
+              <div className="flex items-center justify-between font-medium">
+                <span className={ipCipher.includes('WIPED') ? 'text-emerald-400 font-bold truncate' : 'text-neutral-300'}>
+                  {ipCipher}
+                </span>
+                {ipCipher.includes('WIPED') ? (
+                  <span className="text-[10px] text-emerald-400 font-bold">OCULTA / WIPED</span>
+                ) : (
+                  <span className="text-[10px] text-rose-400 font-bold animate-pulse">EXpuesta</span>
+                )}
+              </div>
+            </div>
+            
+            <div className="flex justify-end pt-1">
+              <button
+                onClick={handleWipeIpData}
+                disabled={ipCipher.includes('WIPED')}
+                className={`text-[9px] font-bold px-2.5 py-1 rounded transition-all cursor-pointer flex items-center gap-1 border ${
+                  ipCipher.includes('WIPED')
+                    ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 cursor-not-allowed'
+                    : 'bg-rose-500/10 hover:bg-rose-500/25 border-rose-500/20 text-rose-300 hover:text-white'
+                }`}
+                title="Limpiar y purgar por completo los rastros de tu dirección IP física de los buffers locales"
+              >
+                <Trash2 className="w-3 h-3 shrink-0" />
+                <span>{ipCipher.includes('WIPED') ? 'Rastro de IP Purgado' : 'Limpiar Rastro (Wipe IP)'}</span>
+              </button>
             </div>
           </div>
-          <div className="bg-neutral-950/40 p-3 rounded-xl border border-white/5 relative overflow-hidden">
-            <div className="text-neutral-500 uppercase text-[9px] tracking-widest font-semibold mb-1">Dirección Encriptada (Crystal Shield)</div>
-            <div className="flex items-center justify-between font-medium">
-              <span className={isVpnActive ? 'text-indigo-400' : 'text-neutral-500 font-bold'}>
-                {encryptedIp}
-              </span>
-              {isVpnActive && <span className="text-[10px] text-emerald-400 font-bold animate-pulse">SEGURO</span>}
+          
+          <div className="bg-neutral-950/40 p-3 rounded-xl border border-white/5 relative overflow-hidden flex flex-col justify-between">
+            <div>
+              <div className="text-neutral-500 uppercase text-[9px] tracking-widest font-semibold mb-1">Dirección Encriptada (Crystal Shield)</div>
+              <div className="flex items-center justify-between font-medium">
+                <span className={isVpnActive ? 'text-indigo-400 truncate' : 'text-neutral-500 font-bold'}>
+                  {encryptedIp}
+                </span>
+                {isVpnActive && <span className="text-[10px] text-emerald-400 font-bold animate-pulse">SEGURO</span>}
+              </div>
+            </div>
+            <div className="text-[8.5px] text-neutral-500 mt-2 text-right">
+              Túnel VPN Militar AES-256 Activo
             </div>
           </div>
         </div>
 
         {/* Real Cryptographic Testing Suite */}
-        <div className="mt-5 p-4 rounded-xl bg-black/40 border border-white/5 flex flex-col gap-3" id="web-crypto-sandbox">
+        <div className="mt-5 p-4 rounded-xl bg-black/40 border border-white/5 flex flex-col gap-3" id="web-crypto-core">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-indigo-500 animate-ping shrink-0" />

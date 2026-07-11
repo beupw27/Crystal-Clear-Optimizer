@@ -81,9 +81,38 @@ Para evitar que competidores o hackers accedan a las fórmulas de optimización 
 
 ## 💳 PASO 3: Automatización de Ventas y Emisión de Claves
 
-Para que tu programa se venda en piloto automático las 24 horas del día, conecte su página web con una pasarela segura como **Stripe**, **Lemon Squeezy** o **Paddle**.
+Para vender tu aplicación en piloto automático las 24 horas del día, necesitas una plataforma de pago. Si **Lemon Squeezy** te resulta complejo o estricto, existen alternativas excelentes y mucho más sencillas que funcionan perfectamente en **Panamá** y el resto de Latinoamérica.
 
-### Arquitectura de Venta Automatizada:
+### 🌟 Las mejores alternativas y más fáciles para Panamá:
+
+#### 1. Gumroad (La opción más recomendada y rápida)
+* **¿Por qué es la mejor?**: Es sumamente flexible, se aprueba casi al instante, y funciona como *Merchant of Record* (ellos se encargan de cobrar, calcular impuestos globales y pagarte de forma consolidada directamente a tu cuenta de banco o PayPal en Panamá).
+* **Licencias de Software Nativas**: No necesitas programar un servidor. Gumroad tiene una opción llamada **"License Keys"** (Claves de Licencia). Al activarla, Gumroad genera una clave única para cada comprador y se la muestra al pagar. ¡Cero código!
+* **Solución al requisito de URL**: Cuando Gumroad te pida una URL, puedes ingresar:
+  * El enlace de tu repositorio de **GitHub** donde subiste el código.
+  * Tu enlace de previsualización pública de AI Studio: `https://ais-pre-fhkogz4ccd6s4dpue3ltej-638595745434.us-west2.run.app` (esto demuestra que el producto es real y funcional).
+
+#### 2. Payhip (Extremadamente simple y tarifas bajas)
+* **¿Por qué elegirla?**: Al igual que Gumroad, gestionan todos los impuestos de venta mundiales por ti. Su interfaz es limpísima y moderna.
+* **Licencias de Software Nativas**: Te permite subir un archivo de texto con claves pre-generadas (que puedes crear con nuestro generador interactivo en la app) o dejar que Payhip genere claves únicas automáticamente para cada cliente.
+* **Solución al requisito de URL**: Al igual que en Gumroad, puedes usar tu enlace de GitHub o tu URL de previsualización de AI Studio.
+
+---
+
+### ¿Cómo solucionar el requisito de URL en cualquier plataforma?
+Todas las pasarelas de pago serias exigen una URL para verificar que no estás vendiendo nada ilegal o fraudulento. Dado que ya tienes tu código en GitHub y una versión funcional en línea, tienes dos opciones perfectas para colocar en ese campo:
+
+1. **Tu App en Producción (URL de AI Studio)**:
+   `https://ais-pre-fhkogz4ccd6s4dpue3ltej-638595745434.us-west2.run.app`
+   *(Esta es tu mejor carta de presentación. Los revisores de la plataforma podrán abrir el enlace, interactuar con el optimizador y verán que es un software real y legítimo).*
+
+2. **Tu Repositorio de GitHub**:
+   `https://github.com/tu-usuario/tu-repositorio`
+   *(Si es privado, puedes ponerlo temporalmente como público o simplemente usar el enlace de AI Studio).*
+
+---
+
+### Arquitectura de Venta Automatizada (Si decides usar un servidor personalizado):
 ```
 [ Cliente compra en Web ] ──> [ Webhook de Stripe ] ──> [ Servidor / Cloud Function ]
                                                               │ (Genera Clave Aleatoria)

@@ -1,6 +1,6 @@
 {
   "name": "Crystal Clear Optimizer",
-  "description": "An elegant, interactive system optimizer and cache cleaning simulator featuring an immersive animated refractive crystal core, real-time memory analytics, and professional configurations.",
+  "description": "An interactive, pixel-perfect simulation and tool inspired by Wise Memory Optimizer. Features an authentic Windows-style desktop application wrapper, real-time memory pie chart, auto-optimization settings, system tray integrations, active process monitors, and a real PC hardware diagnostics agent.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

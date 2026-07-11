@@ -1,0 +1,54 @@
+name: "Publish Windows Release"
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  publish-tauri:
+    permissions:
+      contents: write
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-size: '18'
+          node-version: 20
+
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: install dependencies (ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libayatana-appindicator3-dev librsvg2-dev
+
+      - name: install frontend dependencies
+        run: npm install
+
+      - name: Install Tauri CLI
+        run: npm install -D @tauri-apps/cli
+
+      - name: Prepare Tauri Configuration
+        shell: pwsh
+        run: |
+          npx tauri init --app-name "crystal-clear-optimizer" --window-title "Crystal Clear Optimizer" --dist-dir "../dist" --dev-path "http://localhost:3000" --before-build-command "npm run build" --ci
+          Copy-Item -Path "distribucion/tauri.conf.json" -Destination "src-tauri/tauri.conf.json" -Force
+
+      - name: Build Web Application
+        run: npm run build
+
+      - name: Build Tauri Desktop Application
+        run: npx tauri build
+
+      - name: Upload Installer Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: crystal-clear-windows-installer
+          path: src-tauri/target/release/bundle/msi/*.msi

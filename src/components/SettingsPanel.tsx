@@ -255,6 +255,40 @@ export default function SettingsPanel({
                   }`} />
                 </button>
               </div>
+
+              <div className="flex items-center justify-between bg-neutral-900/40 p-3 rounded-xl border border-emerald-500/10">
+                <div className="flex flex-col">
+                  <span className="text-xs font-semibold text-emerald-400">Real Booster (Modo Ultra)</span>
+                  <span className="text-[10px] text-neutral-400">Libera procesos y optimiza hilos de CPU</span>
+                </div>
+                <button
+                  onClick={() => updateSetting('realBoosterActive', !settings.realBoosterActive)}
+                  className={`w-10 h-6 rounded-full p-1 transition-colors flex items-center ${
+                    settings.realBoosterActive ? 'bg-emerald-500' : 'bg-neutral-800'
+                  }`}
+                >
+                  <span className={`bg-white w-4 h-4 rounded-full transition-all block ${
+                    settings.realBoosterActive ? 'translate-x-4' : 'translate-x-0'
+                  }`} />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between bg-neutral-900/40 p-3 rounded-xl border border-indigo-500/10">
+                <div className="flex flex-col">
+                  <span className="text-xs font-semibold text-indigo-400">Limpieza de Caché de GPU</span>
+                  <span className="text-[10px] text-neutral-400">Purga búferes de texturas y shaders VRAM</span>
+                </div>
+                <button
+                  onClick={() => updateSetting('gpuCacheCleanEnabled', !settings.gpuCacheCleanEnabled)}
+                  className={`w-10 h-6 rounded-full p-1 transition-colors flex items-center ${
+                    settings.gpuCacheCleanEnabled ? 'bg-emerald-500' : 'bg-neutral-800'
+                  }`}
+                >
+                  <span className={`bg-white w-4 h-4 rounded-full transition-all block ${
+                    settings.gpuCacheCleanEnabled ? 'translate-x-4' : 'translate-x-0'
+                  }`} />
+                </button>
+              </div>
             </div>
 
             {/* Exclude Logs Duration */}

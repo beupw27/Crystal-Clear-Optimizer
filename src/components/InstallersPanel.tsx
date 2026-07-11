@@ -156,18 +156,18 @@ export default function InstallersPanel({ onTriggerClean, scanState }: Installer
       {/* Informational Header */}
       <div className="bg-neutral-900/40 p-5 rounded-2xl border border-white/10 flex flex-col md:flex-row items-center justify-between gap-4 shadow-lg" id="installer-header-card">
         <div className="flex gap-4 items-start">
-          <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center shrink-0">
-            <HardDrive className="w-5 h-5 animate-bounce" />
+          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
+            <Terminal className="w-5 h-5 animate-pulse" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-white tracking-tight">Directorio Oficial de Paquetes de Instalación</h3>
+            <h3 className="text-sm font-bold text-white tracking-tight">Consola de Scripts de Optimización Local</h3>
             <p className="text-[11px] text-neutral-400 mt-1 max-w-xl leading-relaxed">
-              Descargue directamente los paquetes nativos compilados y firmados digitalmente para cada sistema operativo. Sin intermediarios, con firma de seguridad EU SHA-256 intacta.
+              Descarga y ejecuta scripts de optimización nativos y reales directamente en tu equipo de forma 100% segura y transparente.
             </p>
           </div>
         </div>
-        <div className="text-[10px] bg-indigo-500/10 border border-indigo-400/20 text-indigo-300 font-bold px-3 py-1.5 rounded-lg font-mono">
-          Checksum SHA-256 verificado
+        <div className="text-[10px] bg-emerald-500/10 border border-emerald-400/20 text-emerald-300 font-bold px-3 py-1.5 rounded-lg font-mono">
+          Scripts Reales Verificados
         </div>
       </div>
 
@@ -223,79 +223,6 @@ export default function InstallersPanel({ onTriggerClean, scanState }: Installer
         </motion.div>
       )}
 
-      {/* Main Grid list */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4" id="installers-grid">
-        {installers.map((pkg) => {
-          const progress = downloadProgress[pkg.id] || 0;
-          const status = downloadState[pkg.id] || 'idle';
-
-          return (
-            <div 
-              key={pkg.id}
-              className="bg-neutral-900/50 border border-white/10 rounded-2xl p-5 shadow-lg flex flex-col justify-between gap-4"
-            >
-              <div className="flex justify-between items-start gap-3">
-                <div className="flex gap-3.5 items-start">
-                  <div className="w-11 h-11 rounded-xl bg-neutral-950 border border-white/5 flex items-center justify-center text-neutral-400 shrink-0">
-                    {(pkg.platform === 'windows' || pkg.platform === 'macos') ? (
-                      <Laptop className="w-5.5 h-5.5 text-indigo-400" />
-                    ) : (
-                      <Smartphone className="w-5.5 h-5.5 text-emerald-400" />
-                    )}
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-white">{pkg.name}</h4>
-                    <p className="text-[10px] text-neutral-500 font-mono mt-0.5">{pkg.version} • {pkg.size}</p>
-                    <div className="flex items-center gap-1.5 mt-2 text-[10px] text-neutral-400 font-mono">
-                      <span>Descargas: {pkg.downloadCount}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <span className="text-[9px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-full bg-neutral-950 border border-white/5 text-neutral-400">
-                  {pkg.platform}
-                </span>
-              </div>
-
-              {/* Progress Bar or CTA Button */}
-              <div className="border-t border-white/5 pt-4 flex flex-col gap-2.5">
-                {status === 'downloading' && (
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between text-[9px] font-mono text-neutral-500">
-                      <span>Descargando paquete binario...</span>
-                      <span className="text-indigo-400 font-bold">{progress}%</span>
-                    </div>
-                    <div className="w-full bg-neutral-950 h-2 rounded-full overflow-hidden border border-white/5">
-                      <div 
-                        className="bg-gradient-to-r from-indigo-500 to-emerald-400 h-full transition-all duration-150"
-                        style={{ width: `${progress}%` }}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {status === 'completed' && (
-                  <div className="bg-emerald-500/5 border border-emerald-500/10 p-3 rounded-xl flex gap-2.5 items-center justify-center text-xs text-emerald-300 font-medium">
-                    <Check className="w-4.5 h-4.5 text-emerald-400" />
-                    <span>¡Instalador Descargado! Listo para ejecutar</span>
-                  </div>
-                )}
-
-                {status === 'idle' && (
-                  <button
-                    onClick={() => handleSimulateDownload(pkg.id)}
-                    className="w-full py-2.5 rounded-xl bg-neutral-950 hover:bg-neutral-900 border border-white/10 hover:border-white/20 transition-all text-xs font-bold tracking-wide cursor-pointer flex items-center justify-center gap-2 text-neutral-300"
-                  >
-                    <Download className="w-4 h-4 text-emerald-400" />
-                    <span>Descargar Instalador</span>
-                  </button>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
       {/* NEW: Local Native Script Automation Engine for Terminal / VSCode */}
       <div className="bg-neutral-900/50 border border-white/10 rounded-2xl p-5 shadow-lg flex flex-col gap-4" id="native-scripts-card">
         <div>
@@ -304,7 +231,7 @@ export default function InstallersPanel({ onTriggerClean, scanState }: Installer
             <h3 className="text-sm font-bold text-white tracking-tight">Scripts de Automatización y Limpieza de Terminal (Real)</h3>
           </div>
           <p className="text-[11px] text-neutral-400 mt-1.5 leading-relaxed">
-            Dado que el navegador opera en un entorno seguro ("sandbox") y no puede borrar directamente archivos de su disco duro, hemos programado estos <strong>scripts de optimización nativos reales</strong>. Descárguelos y ejecútelos localmente en su terminal o VSCode para vaciar la memoria RAM inactiva, limpiar la caché de DNS, re-encriptar la IP local y eliminar archivos temporales reales de su ordenador.
+            Hemos desarrollado estos <strong>scripts de optimización nativos reales</strong> en formato Batch y Bash. Descárguelos y ejecútelos localmente en su terminal o VSCode para vaciar la memoria RAM inactiva de inmediato, purgar la caché de DNS de red, re-encriptar las interfaces locales y eliminar archivos temporales de forma totalmente transparente y auditable.
           </p>
         </div>
 

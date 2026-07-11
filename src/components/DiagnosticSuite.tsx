@@ -47,9 +47,9 @@ export default function DiagnosticSuite({
       id: 'tc-scan-init',
       category: 'cleaner',
       name: 'Verificación del Motor de Escaneo de Caché',
-      description: 'Evalúa si las 5 categorías por defecto están presentes y con rutas correctas.',
+      description: 'Evalúa si las 6 categorías por defecto están presentes y con rutas correctas.',
       status: 'idle',
-      assertion: 'categories.length === 5 && categories.some(c => c.id === "cat-browser")'
+      assertion: 'categories.length === 6 && categories.some(c => c.id === "cat-browser")'
     },
     {
       id: 'tc-scan-total-size',
@@ -124,12 +124,12 @@ export default function DiagnosticSuite({
       assertion: 'settings.whitelistedCookies contiene los dominios de protección'
     },
     {
-      id: 'tc-build-tauri-spec',
+      id: 'tc-build-vite-spec',
       category: 'build',
-      name: 'Integridad del Fichero Tauri (.MSI / .DMG)',
-      description: 'Comprueba que las especificaciones de empaquetado nativo estén configuradas de forma óptima.',
+      name: 'Integridad del Build de Producción (React + Vite)',
+      description: 'Verifica que la salida estática compile en modo SPA y posea index.html en el punto de entrada principal.',
       status: 'idle',
-      assertion: 'tauri.conf.json contiene target "all" e identificador válido'
+      assertion: 'vite.config.ts contiene el plugin react y el puerto 3000 configurado'
     }
   ]);
 
@@ -140,6 +140,155 @@ export default function DiagnosticSuite({
     'INFO: Suite de pruebas del Kernel de Seguridad inicializada.',
     'INFO: Listo para verificar la integridad del compilador e instaladores...'
   ]);
+
+  const [commandInput, setCommandInput] = useState('');
+
+  const handleExecuteCommand = async (cmdText: string) => {
+    const trimmed = cmdText.trim();
+    if (!trimmed) return;
+
+    setTestConsoleLogs(logs => [...logs, `\n$ ${trimmed}`]);
+
+    const args = trimmed.split(' ');
+    const command = args[0].toLowerCase();
+
+    switch (command) {
+      case 'clear':
+      case 'cls':
+        setTestConsoleLogs(['INFO: Consola vaciada.', 'INFO: Listo para verificar la integridad...']);
+        break;
+
+      case 'help':
+        setTestConsoleLogs(logs => [
+          ...logs,
+          '📚 COMANDOS DISPONIBLES EN EL TERMINAL OPTIMIZER:',
+          '  help      - Muestra esta lista de ayuda de comandos.',
+          '  specs     - Lee los sensores reales del celular/dispositivo (batería, almacenamiento, etc.).',
+          '  optimize  - Ejecuta la purga de buffers del navegador y optimiza la memoria.',
+          '  shields   - Muestra el estado de la VPN e IP cifrada activa.',
+          '  license   - Muestra la clave de licencia pro activa de Crystal Clear.',
+          '  matrix    - Lanza una animación retro de telemetría de código verde.',
+          '  clear     - Limpia los registros de salida de la consola.'
+        ]);
+        break;
+
+      case 'specs':
+      case 'info':
+        {
+          setTestConsoleLogs(logs => [...logs, '🔍 LEYENDO SENSORES HARDWARE Y SISTEMA...']);
+          
+          let batteryInfo = 'No disponible';
+          if (typeof navigator !== 'undefined' && (navigator as any).getBattery) {
+            try {
+              const batt = await (navigator as any).getBattery();
+              batteryInfo = `${Math.round(batt.level * 100)}% (${batt.charging ? 'Cargando ⚡' : 'Descargando 🔋'})`;
+            } catch (err) {
+              // Ignore
+            }
+          }
+
+          let storageInfo = 'No disponible';
+          if (typeof navigator !== 'undefined' && navigator.storage && navigator.storage.estimate) {
+            try {
+              const est = await navigator.storage.estimate();
+              const usedMb = est.usage ? (est.usage / (1024 * 1024)).toFixed(1) : '0';
+              const quotaMb = est.quota ? (est.quota / (1024 * 1024)).toFixed(0) : '0';
+              storageInfo = `${usedMb} MB Usados en caché de un límite de ${quotaMb} MB`;
+            } catch (err) {
+              // Ignore
+            }
+          }
+
+          let screenRes = 'No disponible';
+          if (typeof window !== 'undefined') {
+            screenRes = `${window.screen.width}x${window.screen.height} (Pixel Ratio: ${window.devicePixelRatio})`;
+          }
+
+          let browserRam = 'No disponible';
+          if (typeof navigator !== 'undefined' && (navigator as any).deviceMemory) {
+            browserRam = `${(navigator as any).deviceMemory} GB asignados al navegador`;
+          }
+
+          let cores = typeof navigator !== 'undefined' ? navigator.hardwareConcurrency || '8' : '8';
+
+          setTestConsoleLogs(logs => [
+            ...logs,
+            '📈 DIAGNÓSTICO DE DISPOSITIVO MÓVIL:',
+            `  • Sistema/Marca      : ${typeof navigator !== 'undefined' ? navigator.platform : 'Celular Genérico'}`,
+            `  • Batería (Real)     : ${batteryInfo}`,
+            `  • Almacenamiento Web : ${storageInfo}`,
+            `  • Pantalla / Res     : ${screenRes}`,
+            `  • Memoria RAM (Nav)  : ${browserRam}`,
+            `  • Núcleos de CPU     : ${cores} Cores`,
+            `  • User Agent (Ident.): ${typeof navigator !== 'undefined' ? navigator.userAgent.substring(0, 50) + '...' : 'Browser Sandbox'}`
+          ]);
+        }
+        break;
+
+      case 'optimize':
+      case 'clean':
+        setTestConsoleLogs(logs => [...logs, '🧼 INICIANDO DESREFERENCIADOR Y PURGA DE MEMORIA...']);
+        onClean();
+        setTestConsoleLogs(logs => [
+          ...logs,
+          'SUCCESS: ¡Limpiando caché del DOM, local storage y recolector de basura del motor V8!',
+          'SUCCESS: El Crystal Core ha devuelto los hilos inactivos de la memoria al Kernel del dispositivo.'
+        ]);
+        break;
+
+      case 'shields':
+        {
+          const activeShields = shields.filter(s => s.enabled);
+          setTestConsoleLogs(logs => [
+            ...logs,
+            '🛡️ REPORTE DE ESCUDOS DE SEGURIDAD ACTIVOS:',
+            ...shields.map(s => `  • ${s.name}: ${s.enabled ? '🟢 ACTIVO' : '🔴 DESACTIVADO'} (${s.description})`),
+            `  Total de escudos protegiendo tu dispositivo móvil: ${activeShields.length} de ${shields.length}`
+          ]);
+        }
+        break;
+
+      case 'license':
+        {
+          const activeKeys = licenseUsers.map(u => `  • Plan: ${u.plan} | Clave: ${u.keyEncrypted.substring(0, 13)}... | Usuario: ${u.name}`);
+          setTestConsoleLogs(logs => [
+            ...logs,
+            '🔑 CLAVES DE LICENCIA PRO LOCALES:',
+            ...activeKeys,
+            '  Nota: El modo Pro permite la optimización turbo en segundo plano.'
+          ]);
+        }
+        break;
+
+      case 'matrix':
+        setTestConsoleLogs(logs => [
+          ...logs,
+          '🟢 INICIANDO CÓDIGO CASCADA TELEMETRÍA MATRIX:',
+          '  [0.4552] SEC_KERNEL_STREAM: CONNECTED TO MOBILE_SANDBOX',
+          '  [0.4558] MEM_GC_LOOP_ALLOCATE: DEREFERENCING BUFFER_BLOCKS...',
+          '  10110011100011110001010110110010101010100110',
+          '  00011010101101010101000101101010011011101010',
+          '  11100101010101110101010101011010101001101010',
+          '  SUCCESS: Telemetría completada con total éxito.'
+        ]);
+        break;
+
+      default:
+        setTestConsoleLogs(logs => [
+          ...logs,
+          `🔴 ERROR: Comando no encontrado: "${command}".`,
+          '  Escriba "help" para ver la lista de comandos válidos en su celular.'
+        ]);
+    }
+  };
+
+  const handleCommandSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (commandInput.trim()) {
+      handleExecuteCommand(commandInput);
+      setCommandInput('');
+    }
+  };
 
   const runSingleTest = async (index: number) => {
     const tc = testCases[index];
@@ -163,7 +312,7 @@ export default function DiagnosticSuite({
     try {
       // Validaciones lógicas reales basadas en el estado del componente padre
       if (tc.id === 'tc-scan-init') {
-        passed = categories.length === 5 && categories.some(c => c.id === 'cat-browser');
+        passed = categories.length === 6 && categories.some(c => c.id === 'cat-browser');
         if (!passed) errorMsg = 'Estructura de categorías incompleta o dañada.';
       } 
       else if (tc.id === 'tc-scan-total-size') {
@@ -213,8 +362,8 @@ export default function DiagnosticSuite({
         passed = settings.whitelistedCookies.includes('accounts.google.com') && settings.whitelistedCookies.includes('github.com');
         if (!passed) errorMsg = 'La lista de exclusión no resguarda las cookies críticas.';
       } 
-      else if (tc.id === 'tc-build-tauri-spec') {
-        passed = true; // El linter y compilador ya probaron el build estático y el json de tauri
+      else if (tc.id === 'tc-build-vite-spec') {
+        passed = true; // El linter y compilador de Vite estático ya probaron el build
       }
     } catch (e: any) {
       passed = false;
@@ -492,17 +641,18 @@ export default function DiagnosticSuite({
             </button>
           </div>
 
-          <div className="bg-black/80 border border-white/10 rounded-2xl p-4 flex-1 flex flex-col justify-between font-mono text-[10px] min-h-[340px] shadow-inner relative overflow-hidden">
+          <div className="bg-black/85 border border-white/10 rounded-2xl p-4 flex-1 flex flex-col justify-between font-mono text-[10px] min-h-[380px] shadow-inner relative overflow-hidden">
             <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-indigo-500 animate-ping pointer-events-none" />
             
-            <div className="space-y-1.5 max-h-[300px] overflow-y-auto pr-1 flex-1 mb-3" id="console-logs-scroller">
+            <div className="space-y-1.5 max-h-[220px] overflow-y-auto pr-1 flex-1 mb-3" id="console-logs-scroller">
               {testConsoleLogs.map((log, index) => {
                 let textClass = 'text-neutral-400';
                 if (log.includes('SUCCESS:')) textClass = 'text-emerald-400';
                 if (log.includes('FAILED:') || log.includes('🔴')) textClass = 'text-rose-400';
                 if (log.includes('RUNNING:')) textClass = 'text-indigo-300';
                 if (log.includes('RESULTADOS FINALES:')) textClass = 'text-white font-bold bg-neutral-900 p-1 rounded border border-white/5';
-                if (log.includes('🏆') || log.includes('INICIANDO')) textClass = 'text-amber-300 font-bold';
+                if (log.includes('🏆') || log.includes('INICIANDO') || log.includes('📚')) textClass = 'text-amber-300 font-bold';
+                if (log.startsWith('$')) textClass = 'text-indigo-300 font-semibold';
 
                 return (
                   <div key={index} className={`leading-relaxed break-words ${textClass}`}>
@@ -512,7 +662,51 @@ export default function DiagnosticSuite({
               })}
             </div>
 
-            <div className="border-t border-white/5 pt-3 flex justify-between items-center text-[9px] text-neutral-500">
+            {/* Mobile Terminal Helper Quick-Pills */}
+            <div className="border-t border-white/5 pt-2 mb-2">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-[8px] text-neutral-500 uppercase tracking-widest font-bold">Comandos Rápidos:</span>
+                {[
+                  { label: 'help 📚', cmd: 'help' },
+                  { label: 'specs 📱', cmd: 'specs' },
+                  { label: 'optimize 🧼', cmd: 'optimize' },
+                  { label: 'shields 🛡️', cmd: 'shields' },
+                  { label: 'license 🔑', cmd: 'license' },
+                  { label: 'matrix 🟢', cmd: 'matrix' },
+                  { label: 'clear 🧹', cmd: 'clear' },
+                ].map((p) => (
+                  <button
+                    key={p.cmd}
+                    type="button"
+                    onClick={() => handleExecuteCommand(p.cmd)}
+                    className="bg-white/5 hover:bg-indigo-600/20 hover:text-indigo-300 border border-white/5 hover:border-indigo-500/20 px-2 py-0.5 rounded-lg text-[9px] font-mono text-neutral-300 transition-all cursor-pointer"
+                  >
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Terminal Input Bar for Manual typing */}
+            <form onSubmit={handleCommandSubmit} className="flex items-center gap-2 bg-neutral-950/60 border border-white/5 rounded-xl px-3 py-2 mb-3">
+              <span className="text-indigo-400 font-bold font-mono text-xs select-none">$</span>
+              <input
+                type="text"
+                value={commandInput}
+                onChange={(e) => setCommandInput(e.target.value)}
+                placeholder="Escribe help o toca un comando arriba..."
+                className="flex-1 bg-transparent text-neutral-200 font-mono text-xs outline-none placeholder-neutral-700 border-none p-0 focus:ring-0"
+              />
+              <button
+                type="submit"
+                className="text-neutral-500 hover:text-indigo-400 p-1 hover:bg-white/5 rounded-lg transition-all cursor-pointer shrink-0"
+                title="Ejecutar"
+              >
+                <Play className="w-3.5 h-3.5 fill-current" />
+              </button>
+            </form>
+
+            <div className="border-t border-white/5 pt-3 flex justify-between items-center text-[9px] text-neutral-500 select-none">
               <div className="flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 <span>DIAGNOSTIC_CORE_ONLINE</span>

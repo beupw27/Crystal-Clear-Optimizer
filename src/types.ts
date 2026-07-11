@@ -11,6 +11,8 @@ export interface OptimizerSettings {
   processMemoryLimit: number; // in MB
   whitelistedCookies: string[];
   preserveHistoryDays: number;
+  realBoosterActive: boolean;
+  gpuCacheCleanEnabled: boolean;
 }
 
 export interface CacheFile {
@@ -71,4 +73,15 @@ export interface InstallerPackage {
 }
 
 export type ActiveView = 'optimizer' | 'security' | 'pricing' | 'licensing' | 'installers' | 'tests';
+
+export interface TaskProcess {
+  pid: number;
+  name: string;
+  type: 'system' | 'gpu' | 'v8' | 'db' | 'network';
+  cpuBase: number;
+  ramBase: number;
+  gpuBase: number;
+  status: 'running' | 'terminated';
+}
+
 
